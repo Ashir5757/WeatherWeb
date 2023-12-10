@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather web</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.18.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+   
+  </head>
+  <body>
+
+
+
+    <!-- Weather -->
+    <div class="container mt-5">
+      <div ><h1 class="d-flex flex-row justify-content-center align-items-center"><span class="border shadow rounded-4 p-4 text-primary fw-bolder ">___Weather Web___</span></h1></div>
+      <div class="d-flex flex-row justify-content-center align-items-center">
+        
+        <div class="weather__card border p-5 shadow rounded-4">
+          <!-- alert -->
+          <div
+            class="alert alert-warning alert-dismissible fade show"
+            role="alert"
+          >
+            <strong id="error">Holy guacamole!</strong>
+            <button type="button" class="btn-close"></button>
+          </div>
+
+          <!-- Search bar -->
+          <form action="">
+            <div class="input-group m-3">
+              <input
+                type="search"
+                class="form-control rounded"
+                placeholder="Search"
+                aria-label="Search"
+                aria-describedby="search-addon"
+                id="city"
+              />
+              <input
+                type="submit"
+                class="btn btn-outline-primary"
+                data-mdb-ripple-init
+                id="search"
+              />
+            </div>
+          </form>
+
+          <span
+            style="font-weight: lighter; font-style: italic; cursor: pointer"
+            id="Fahrenheit"
+          >
+            <img
+              src="./images/thermometer-high.svg"
+              width="25px"
+              alt="Thermometer High"
+            />
+            Fahrenheit
+          </span>
+
+          <span
+            style="font-weight: lighter; font-style: italic; cursor: pointer"
+            id="Celsius"
+          >
+            <img
+              src="./images/thermometer-half.svg"
+              width="25px"
+              alt="Thermometer Half"
+            />
+            Celsius
+          </span>
+
+          <div
+            class="d-flex flex-row justify-content-center align-items-center"
+          >
+            <div class="p-3">
+              <h2 class="temp">15&deg;</h2>
+            </div>
+            <div class="p-3">
+              <img src="https://svgur.com/i/oKG.svg" />
+            </div>
+            <div class="p-3">
+              <h5 class="date">Tuesday, 10 AM</h5>
+              <h3 class="city">San Francisco</h3>
+              <span class="description">Mostly Cloudy</span>
+            </div>
+          </div>
+          <div
+            class="weather__status d-flex flex-row justify-content-center align-items-center mt-3"
+          >
+            <div class="p-4 d-flex justify-content-center align-items-center">
+              <img src="https://svgur.com/i/oHw.svg" />
+              <span class="percentage">10%</span>
+            </div>
+            <div class="p-4 d-flex justify-content-center align-items-center">
+              <img src="https://svgur.com/i/oH_.svg" />
+              <span class="pressure">0.53 mB</span>
+            </div>
+            <div class="p-4 d-flex justify-content-center align-items-center">
+              <img src="https://svgur.com/i/oKS.svg" />
+              <span class="wind">10</span><span>km/h Wind Speed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script>
+      $(document).ready(function () {
+        $(".btn-close").click(function (e) {
+          e.preventDefault;
+          $(".alert").hide();
+        });
+
+        $(".alert").hide();
+        $("#search").click(function (e) {
+          e.preventDefault();
+          $(".alert").hide();
+          var city = $("#city").val();
+          if (city == "") {
+            $(".alert").show();
+            $("#error").text("Search can not be empty");
+          } else {
+            weatherData(city);
+
+            async function weatherData(city) {
+              try {
+                var url = "https://api.openweathermap.org/data/2.5/weather?q=";
+                var apiKey = "ff62a8f54cec0aebe54fd852511feecb";
+
+                const response = await fetch(url + city + "&appid=" + apiKey);
+                var data = await response.json();
+                
+                $(".city").text(data.name);
+                const date = new Date(data.dt * 1000);
+                $(".date").text(date.toLocaleString());
+                $(".temp").text(`${data.main.temp} Kelvin`);
+                $(".wind").text(`${data.wind.speed}`);
+                $(".description").text(data.weather[0].description);
+                
+                $(".percentage").text(`${data.main.humidity}% Humidity`);
+                $(".pressure").text(`${data.main.pressure}mB Pressure`);
+                
+                console.log(data);
+              } catch (error) {
+                $(".alert").show();
+                $("#error").text(
+                  "Error fetching weather data for " +
+                    city +
+                    " Recheck the Input and try again "
+                );
+              }
+              var temp = data.main.temp;
+
+              $("#Celsius").click(function () {
+                const temperatureCelsius = temp - 273.15;
+                $(".temp").text(` ${temperatureCelsius.toFixed(2)} °C`);
+              });
+
+              $("#Fahrenheit").click(function () {
+                const temperatureFahrenheit = (temp * 9) / 5 - 459.67;
+                $(".temp").text(` ${temperatureFahrenheit.toFixed(2)} °F`);
+              });
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
