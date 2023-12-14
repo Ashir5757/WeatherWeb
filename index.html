@@ -6,27 +6,23 @@
     <title>Weather web</title>
 
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.18.0/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-
-    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
-   
   </head>
   <body>
-
-
-
     <!-- Weather -->
     <div class="container mt-5">
-      <div ><h1 class="d-flex flex-row justify-content-center align-items-center"><span class="border shadow rounded-4 p-4 text-primary fw-bolder ">___Weather Web___</span></h1></div>
+      <div class="my-4">
+        <h2 class="d-flex flex-row justify-content-center align-items-center">
+          <span class="border shadow rounded-4 p-3 text-primary fw-bolder"
+            >___Weather Web___</span
+          >
+        </h2>
+      </div>
       <div class="d-flex flex-row justify-content-center align-items-center">
-        
         <div class="weather__card border p-5 shadow rounded-4">
           <!-- alert -->
           <div
@@ -38,25 +34,28 @@
           </div>
 
           <!-- Search bar -->
-          <form action="">
-            <div class="input-group m-3">
-              <input
+          <div>
+
+            <form action=""  class="mx-auto">
+              <div class="input-group m-3">
+                <input
                 type="search"
                 class="form-control rounded"
                 placeholder="Search"
                 aria-label="Search"
                 aria-describedby="search-addon"
                 id="city"
-              />
-              <input
+                />
+                <input
                 type="submit"
                 class="btn btn-outline-primary"
                 data-mdb-ripple-init
                 id="search"
-              />
-            </div>
-          </form>
-
+                />
+              </div>
+            </form>
+            
+          </div>
           <span
             style="font-weight: lighter; font-style: italic; cursor: pointer"
             id="Fahrenheit"
@@ -140,10 +139,24 @@
           e.preventDefault();
           $(".alert").hide();
           var city = $("#city").val();
-          if (city == "") {
+
+          function hasNumbers(city) {
+            return typeof city === "string" && /\d/.test(city);
+          }
+
+        
+        
+
+          if (city == "" ) {
             $(".alert").show();
             $("#error").text("Search can not be empty");
-          } else {
+          }else if(hasNumbers(city) == true){
+            
+            $(".alert").show();
+            $("#error").text("Numbers are not valid input. Please enter a valid City Name.");
+          }
+          
+          else {
             weatherData(city);
 
             async function weatherData(city) {
@@ -153,17 +166,17 @@
 
                 const response = await fetch(url + city + "&appid=" + apiKey);
                 var data = await response.json();
-                
+
                 $(".city").text(data.name);
                 const date = new Date(data.dt * 1000);
                 $(".date").text(date.toLocaleString());
                 $(".temp").text(`${data.main.temp} Kelvin`);
                 $(".wind").text(`${data.wind.speed}`);
                 $(".description").text(data.weather[0].description);
-                
+
                 $(".percentage").text(`${data.main.humidity}% Humidity`);
                 $(".pressure").text(`${data.main.pressure}mB Pressure`);
-                
+
                 console.log(data);
               } catch (error) {
                 $(".alert").show();
